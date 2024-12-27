@@ -34,3 +34,8 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# native build
+android
+ios
+!/modules/**/ios

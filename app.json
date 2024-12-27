@@ -13,16 +13,33 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mrevanzak.expo-live-activities-demo"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.mrevanzak.expoliveactivitiesdemo"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "@bacons/apple-targets",
+      [
+        "./modules/live-activities/app.plugin.js",
+        {
+          "frequentUpdates": true
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "enableBackgroundRemoteNotifications": true
+        }
+      ]
+    ]
   }
 }
