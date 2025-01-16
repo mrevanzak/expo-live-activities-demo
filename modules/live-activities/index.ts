@@ -1,22 +1,61 @@
-import { CodedError } from "expo-modules-core";
-/**
- * Live Activity module.
- * @author github.com/mrevanzak
- */
+import { CodedError, EventSubscription } from "expo-modules-core";
 
-import { useEvent } from "expo";
 import type {
   LiveActivityFn,
   LiveActivityState,
+  onPushTokenChangePayload,
 } from "./src/LiveActivities.types";
 import LiveActivitiesModule from "./src/LiveActivitiesModule";
+import { useEffect } from "react";
 
 /**
- * Gets the push token.
+ * Live Activities module.
+ * @author github.com/mrevanzak
  */
-export function useGetPushToken() {
-  const payload = useEvent(LiveActivitiesModule, "onPushTokenChange");
-  return payload;
+
+export function addPushTokenListener(
+  listener: (event: onPushTokenChangePayload) => void
+): EventSubscription {
+  return LiveActivitiesModule.addListener(
+    "LiveActivities.pushTokenDidChange",
+    listener
+  );
+}
+
+export function addStartToPushTokenListener(
+  listener: (event: onPushTokenChangePayload) => void
+): EventSubscription {
+  return LiveActivitiesModule.addListener(
+    "LiveActivities.startTokenDidChange",
+    listener
+  );
+}
+
+/**
+ * Subscribes to the push token changes.
+ */
+export function useGetPushToken(fn: (opt: onPushTokenChangePayload) => void) {
+  useEffect(() => {
+    const subscription = addPushTokenListener(fn);
+    return () => {
+      subscription.remove();
+    };
+  }, []);
+}
+
+/**
+ * setup the live activities
+ * subscribe to the push token changes
+ */
+export function useLiveActivitiesSetup(
+  fn: (opt: onPushTokenChangePayload) => void
+) {
+  useEffect(() => {
+    const subscription = addStartToPushTokenListener(fn);
+    return () => {
+      subscription.remove();
+    };
+  }, []);
 }
 
 /**
@@ -34,7 +73,7 @@ function validateActivityOptions({
   if (typeof progress !== "number" || progress < 0 || progress > 1) {
     throw new CodedError(
       "ERR_ACTIVITY_PROGRESS",
-      "Progress should be a number between 0 and 1",
+      "Progress should be a number between 0 and 1"
     );
   }
 }
@@ -44,7 +83,7 @@ function validateActivityOptions({
  */
 export const startActivity: LiveActivityFn = (
   key,
-  { progress, title, status, estimated, widgetUrl },
+  { progress, title, status, estimated, widgetUrl }
 ) => {
   validateActivityOptions({ progress });
   try {
@@ -54,7 +93,7 @@ export const startActivity: LiveActivityFn = (
       title,
       status,
       estimated,
-      widgetUrl,
+      widgetUrl
     );
   } catch (error) {
     console.error(error);
@@ -67,7 +106,7 @@ export const startActivity: LiveActivityFn = (
  */
 export const updateActivity: LiveActivityFn = (
   key,
-  { progress, title, status, estimated, widgetUrl },
+  { progress, title, status, estimated, widgetUrl }
 ) => {
   validateActivityOptions({ progress });
   LiveActivitiesModule.updateActivity(
@@ -76,7 +115,7 @@ export const updateActivity: LiveActivityFn = (
     title,
     status,
     estimated,
-    widgetUrl,
+    widgetUrl
   );
 };
 
@@ -85,7 +124,7 @@ export const updateActivity: LiveActivityFn = (
  */
 export const endActivity: LiveActivityFn = (
   key,
-  { progress, title, status, estimated, widgetUrl },
+  { progress, title, status, estimated, widgetUrl }
 ) => {
   validateActivityOptions({ progress });
   LiveActivitiesModule.endActivity(
@@ -94,6 +133,6 @@ export const endActivity: LiveActivityFn = (
     title,
     status,
     estimated,
-    widgetUrl,
+    widgetUrl
   );
 };

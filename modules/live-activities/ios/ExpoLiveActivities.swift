@@ -1,9 +1,16 @@
 import ActivityKit
 import ExpoModulesCore
 
-let PUSH_TOKEN_CHANGED_EVENT_NAME = "onPushTokenChange"
+let pushTokenDidChange: String =
+    "LiveActivities.pushTokenDidChange"
+let startTokenDidChange: String =
+    "LiveActivities.startTokenDidChange"
 
 public class ExpoLiveActivities: Module {
+    let logger = Logger(logHandlers: [
+        createOSLogHandler(category: Logger.EXPO_LOG_CATEGORY)
+    ])
+
     // Each module class must implement the definition function. The definition consists of components
     // that describes the module's functionality and behavior.
     // See https://docs.expo.dev/modules/module-api for more details about available components.
@@ -13,12 +20,9 @@ public class ExpoLiveActivities: Module {
         // The module will be accessible from `requireNativeModule('ExpoLiveActivities')` in JavaScript.
         Name("ExpoLiveActivities")
 
-        Events(PUSH_TOKEN_CHANGED_EVENT_NAME)
+        Events(pushTokenDidChange, startTokenDidChange)
 
         Function("areActivitiesEnabled") { () -> Bool in
-            let logger = Logger(logHandlers: [
-                createOSLogHandler(category: Logger.EXPO_LOG_CATEGORY)
-            ])
             logger.info("areActivitiesEnabled()")
 
             if #available(iOS 16.2, *) {
@@ -85,9 +89,6 @@ public class ExpoLiveActivities: Module {
         action: ActivityAction, key: String, progress: Double, title: String,
         status: String, estimated: String, widgetUrl: String?
     ) throws {
-        let logger = Logger(logHandlers: [
-            createOSLogHandler(category: Logger.EXPO_LOG_CATEGORY)
-        ])
         logger.info("\(action)Activity()")
 
         guard #available(iOS 16.2, *) else {
@@ -118,21 +119,6 @@ public class ExpoLiveActivities: Module {
                 logger.info(
                     "Requested a Live Activity \(String(describing: activity.id))."
                 )
-
-                Task {
-                    for await pushToken in activity.pushTokenUpdates {
-                        let pushTokenString = pushToken.reduce("") {
-                            $0 + String(format: "%02x", $1)
-                        }
-
-                        logger.info("New push token: \(pushTokenString)")
-                        self.sendEvent(
-                            PUSH_TOKEN_CHANGED_EVENT_NAME,
-                            [
-                                "token": pushTokenString
-                            ])
-                    }
-                }
             } catch {
                 logger.error(
                     "Error requesting Live Activity: \(error.localizedDescription)"
@@ -143,22 +129,6 @@ public class ExpoLiveActivities: Module {
             Task {
                 for activity in Activity<AirpleAttributes>.activities {
                     if activity.attributes.key == key {
-                        Task {
-                            for await pushToken in activity.pushTokenUpdates {
-                                let pushTokenString = pushToken.reduce("") {
-                                    $0 + String(format: "%02x", $1)
-                                }
-
-                                logger.info(
-                                    "New push token: \(pushTokenString)")
-                                self.sendEvent(
-                                    PUSH_TOKEN_CHANGED_EVENT_NAME,
-                                    [
-                                        "token": pushTokenString
-                                    ])
-                            }
-                        }
-
                         await activity.update(activityContent)
                         logger.info(
                             "Updating the Live Activity: \(activity.id)")

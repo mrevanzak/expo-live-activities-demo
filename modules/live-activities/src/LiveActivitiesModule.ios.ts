@@ -1,7 +1,7 @@
 import { NativeModule, requireNativeModule } from "expo-modules-core";
-import type { LiveActivityModuleEvent } from "./LiveActivities.types";
+import type { LiveActivitiesModuleEvent } from "./LiveActivities.types";
 
-declare class ExpoLiveActivities extends NativeModule<LiveActivityModuleEvent> {
+declare class ExpoLiveActivities extends NativeModule<LiveActivitiesModuleEvent> {
   areActivitiesEnabled(): boolean;
   startActivity(
     key: string,
@@ -9,7 +9,7 @@ declare class ExpoLiveActivities extends NativeModule<LiveActivityModuleEvent> {
     title: string,
     status: string,
     estimated: string,
-    widgetUrl?: string,
+    widgetUrl?: string
   ): void;
   updateActivity(
     key: string,
@@ -17,7 +17,7 @@ declare class ExpoLiveActivities extends NativeModule<LiveActivityModuleEvent> {
     title: string,
     status: string,
     estimated: string,
-    widgetUrl?: string,
+    widgetUrl?: string
   ): void;
   endActivity(
     key: string,
@@ -25,10 +25,8 @@ declare class ExpoLiveActivities extends NativeModule<LiveActivityModuleEvent> {
     title: string,
     status: string,
     estimated: string,
-    widgetUrl?: string,
+    widgetUrl?: string
   ): void;
 }
 
-export default requireNativeModule<ExpoLiveActivities>(
-  "ExpoLiveActivities",
-);
+export default requireNativeModule<ExpoLiveActivities>("ExpoLiveActivities");

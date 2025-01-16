@@ -1,6 +1,7 @@
 {
   "platforms": ["apple"],
   "apple": {
-    "modules": ["ExpoLiveActivities"]
+    "modules": ["ExpoLiveActivities"],
+    "appDelegateSubscribers": ["ExpoLiveActivitiesAppDelegate"]
   }
 }

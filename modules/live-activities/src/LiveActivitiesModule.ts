@@ -1,7 +1,7 @@
 import { NativeModule, requireNativeModule } from "expo-modules-core";
-import type { LiveActivityModuleEvent } from "./LiveActivities.types";
+import type { LiveActivitiesModuleEvent } from "./LiveActivities.types";
 
-class ExpoLiveActivities extends NativeModule<LiveActivityModuleEvent> {
+class ExpoLiveActivities extends NativeModule<LiveActivitiesModuleEvent> {
   areActivitiesEnabled() {
     return false;
   }
@@ -11,7 +11,7 @@ class ExpoLiveActivities extends NativeModule<LiveActivityModuleEvent> {
     _title: string,
     _status: string,
     _estimated: string,
-    _widgetUrl?: string,
+    _widgetUrl?: string
   ) {
     return;
   }
@@ -21,7 +21,7 @@ class ExpoLiveActivities extends NativeModule<LiveActivityModuleEvent> {
     _title: string,
     _status: string,
     _estimated: string,
-    _widgetUrl?: string,
+    _widgetUrl?: string
   ) {
     return;
   }
@@ -31,7 +31,7 @@ class ExpoLiveActivities extends NativeModule<LiveActivityModuleEvent> {
     _title: string,
     _status: string,
     _estimated: string,
-    _widgetUrl?: string,
+    _widgetUrl?: string
   ) {
     return;
   }

@@ -13,10 +13,15 @@ export interface LiveActivityState {
 
 export type LiveActivityFn = (key: string, state: LiveActivityState) => void;
 
-export interface ChangeEventPayload {
+export interface onPushTokenChangePayload {
   token: string;
 }
 
-export type LiveActivityModuleEvent = {
-  onPushTokenChange: (params: ChangeEventPayload) => void;
+export type LiveActivitiesModuleEvent = {
+  "LiveActivities.pushTokenDidChange": (
+    params: onPushTokenChangePayload
+  ) => void;
+  "LiveActivities.startTokenDidChange": (
+    params: onPushTokenChangePayload
+  ) => void;
 };

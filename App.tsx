@@ -2,15 +2,26 @@ import { StatusBar } from "expo-status-bar";
 import { Button, StyleSheet, Text, View } from "react-native";
 
 import * as LiveActivities from "@local:live-activities";
+import { useState } from "react";
 
 export default function App() {
-  const token = LiveActivities.useGetPushToken();
+  const [token, setToken] = useState<string>();
+  const [startToken, setStartToken] = useState<string>();
+
+  LiveActivities.useLiveActivitiesSetup(({ token }) => {
+    setStartToken(token);
+  });
+
+  LiveActivities.useGetPushToken(({ token }) => {
+    setToken(token);
+  });
 
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
 
-      <Text>Token: {token?.token}</Text>
+      <Text>Token: {token}</Text>
+      <Text>Start Token: {startToken}</Text>
       <Button
         title="Start Live Activities"
         onPress={() => {
