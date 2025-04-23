@@ -17,10 +17,10 @@ extension Comparable {
 
 struct TrackingProgressViewStyle: ProgressViewStyle {
     var height: Double = 4
-    var offset: Double = 180
+    var limit: ClosedRange<Double> = -150...150
 
     func makeBody(configuration: Configuration) -> some View {
-        let progress = configuration.fractionCompleted ?? 0
+        let progress = configuration.fractionCompleted ?? 0.0
 
         GeometryReader { geometry in
             ZStack {
@@ -34,10 +34,12 @@ struct TrackingProgressViewStyle: ProgressViewStyle {
                             .frame(width: geometry.size.width * progress)
 
                     }
-                Image("Car").offset(
-                    x: ((-geometry.size.width / 2 + geometry.size.width
-                        * progress) - 24).clamped(to: -offset...offset))
-
+              
+                let dynamicLimit = (-geometry.size.width / 2 + 28)...(geometry.size.width / 2 - 24)
+				Image("Car").offset(
+					x: ((-geometry.size.width / 2 + geometry.size.width
+					   * progress) - 24).clamped(to: dynamicLimit)
+				)
             }
         }.frame(height: height + 20)
     }
@@ -71,7 +73,6 @@ struct AirpleActivityView: View {
                 .resizable()
                 .aspectRatio(contentMode: .fit)
                 .frame(height: 14)
-                .padding(.top)
 
             VStack(alignment: .leading) {
                 HStack {
@@ -93,8 +94,7 @@ struct AirpleActivityView: View {
                 HStack {
                     ProgressView(value: context.state.progress)
                         .progressViewStyle(
-                            TrackingProgressViewStyle(
-                                offset: geometry.size.width))
+                            TrackingProgressViewStyle())
                     Image("Location")
                         .offset(y: -2)
                 }
@@ -102,7 +102,7 @@ struct AirpleActivityView: View {
             Spacer()
 
         }
-        .padding(.horizontal)
+        .padding(.all)
     }
 }
 
@@ -134,7 +134,10 @@ struct AirpleActivityViewSmall: View {
                         .frame(height: 12)
                 }
 
-                ProgressView(value: context.state.progress).tint(Color("Color"))
+                ProgressView(
+                    value: context.state.progress
+                ).tint(
+                    Color("Color"))
             }
         }
         .padding(.all)
@@ -165,10 +168,11 @@ struct AirpleIslandBottom: View {
 
             GeometryReader { geometry in
                 HStack {
-                    ProgressView(value: context.state.progress)
-                        .progressViewStyle(
-                            TrackingProgressViewStyle(
-                                offset: geometry.size.width))
+                    ProgressView(
+                        value: context.state.progress
+                    )
+                    .progressViewStyle(
+                        TrackingProgressViewStyle(limit: -135...150))
                     Image("Location")
                         .offset(y: -2)
                 }
@@ -187,6 +191,7 @@ struct AirpleWidgetIOS18: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: AirpleAttributes.self) { context in
             AirpleActivityViewWithFamily(context: context)
+                .widgetURL(URL(string: context.state.widgetUrl ?? ""))
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
@@ -231,6 +236,7 @@ struct AirpleWidget: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: AirpleAttributes.self) { context in
             AirpleActivityView(context: context)
+                .widgetURL(URL(string: context.state.widgetUrl ?? ""))
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
@@ -269,7 +275,7 @@ struct AirpleWidget: Widget {
 
 extension AirpleAttributes {
     fileprivate static var preview: AirpleAttributes {
-        AirpleAttributes()
+        AirpleAttributes(key: "test")
     }
 }
 
