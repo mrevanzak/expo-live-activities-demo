@@ -18,4 +18,6 @@ struct AirpleAttributes: ActivityAttributes {
         var estimated: String
         var widgetUrl: String?
     }
+    
+    var key: String
 }

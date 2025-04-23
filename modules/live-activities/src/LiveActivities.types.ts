@@ -19,9 +19,9 @@ export interface onPushTokenChangePayload {
 
 export type LiveActivitiesModuleEvent = {
   "LiveActivities.pushTokenDidChange": (
-    params: onPushTokenChangePayload
+    params: onPushTokenChangePayload & { key: string },
   ) => void;
   "LiveActivities.startTokenDidChange": (
-    params: onPushTokenChangePayload
+    params: onPushTokenChangePayload,
   ) => void;
 };
